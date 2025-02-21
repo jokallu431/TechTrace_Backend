@@ -3,7 +3,8 @@ var router = express.Router();
 const {user} = require('../modules/schema');
 const jwt=require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-
+const upload = require('../multer/multer_config');
+const activityLogger =require('../middlewares/activityLogger');
 const saltRounds = 10;
 
 /* Token Generation */
@@ -32,9 +33,9 @@ return result;
 }
 
 // Import the user model
-router.post('/profile', async function(req, res, next) {
+router.post('/profile',upload.single('image'), async function(req, res, next) {
 try {
-  
+  const image=req.file?`/uploads/${req.file.filename}`:null;
   const {name,email,password,phone,role,branch } = req.body;
   
   let securePassword= await encrypt(password);
@@ -42,6 +43,7 @@ try {
   // Create a new user document
   const newuser = new user({
     name,
+    image,
     email,
     password:securePassword,
     phone,
@@ -70,19 +72,18 @@ router.get('/technician_list', async (req, res) => {
 
 
 /* User Login */
-router.post('/login', async function(req, res, next) {
-  console.log("Login called");
-
+router.post('/login',activityLogger, async function(req, res, next) {
   const {email} = req.body;
     const users = await user.findOne({email:email});
-    console.log(users.password);
     
     if (users){
-      let password=(req.body.password); 
-      console.log(users);
+      let password=(req.body.password);
       let result= await decrypt(password,users.password);
-      console.log(users);
           if (result==true){
+            req.users=users;
+            req.userId = users._id; 
+            console.log("user Id",req.userId);
+            
           let token = generateAccessToken(JSON.stringify(users));
           res.send({
               message :"User List",
@@ -110,6 +111,42 @@ router.get('/verify', function (req, res, next){
     
     res.send(user);
   });
+});
+
+
+// PATCH: Update a user by ID
+router.patch("/update_user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    const options = { new: true };
+    
+    const updatedUser = await user.findByIdAndUpdate(id, updates, options);
+    
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE: Remove a user by ID
+router.delete("/delete_user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedUser = await user.findByIdAndDelete(id);
+    
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 module.exports = router;

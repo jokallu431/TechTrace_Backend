@@ -4,6 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
+// const socket = require('socket.io');
+// const http = require('http');
+// const server = http.createServer(app);
+// const io = socket(server);
+// const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
+
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 

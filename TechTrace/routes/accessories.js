@@ -1,14 +1,14 @@
 var express = require("express");
 var router = express.Router();
-const { accessories } = require("../modules/schema");
+const { accessoriess } = require("../modules/schema");
 /* create Branch listing. */
 router.post("/create_accessories", async function (req, res, next) {
   try {
     const { accessories_Name, accessories_Desc, accessories_Quantity } =
       req.body;
-    const accessories_Id = await accessories.generateaccessoriesId();
+    const accessories_Id = await accessoriess.generateaccessoriesId();
     // Create a new branch document
-    const newaccessories = new accessories({
+    const newaccessories = new accessoriess({
       accessories_Id,
       accessories_Name,
       accessories_Desc,
@@ -33,7 +33,7 @@ router.post("/create_accessories", async function (req, res, next) {
 // Example: Fetch all branches
 router.get("/accessories_list", async (req, res) => {
   try {
-    const accessories_list = await accessories.find();
+    const accessories_list = await accessoriess.find();
     res.status(200).json(accessories_list);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -46,7 +46,7 @@ router.patch("/update_accessories/:accessories_Id", async (req, res) => {
     const { accessories_Id } = req.params;
     const updateData = req.body;
 
-    const updatedAccessory = await accessories.findOneAndUpdate(
+    const updatedAccessory = await accessoriess.findOneAndUpdate(
       { accessories_Id }, 
       updateData,
       { new: true }
@@ -67,7 +67,7 @@ router.delete("/delete_accessories/:accessories_Id", async (req, res) => {
   try {
     const { accessories_Id } = req.params;
 
-    const deletedAccessory = await accessories.findOneAndDelete(
+    const deletedAccessory = await accessoriess.findOneAndDelete(
       { accessories_Id }
     );
 

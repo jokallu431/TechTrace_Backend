@@ -60,7 +60,7 @@ try {
 }
 });
 
-// Example: Fetch all branches
+// Example: Fetch all technicains
 router.get('/technician_list', async (req, res) => {
   try {
     const users = await user.find();

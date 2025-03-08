@@ -40,11 +40,18 @@ const userSchema = new mongoose.Schema({
 const taskSchema = new mongoose.Schema({
   task_Id: { type: String, required: true, unique: true },
   task_Name: { type: String, required: true },
-  task_Phone:{ type:String,required:true },
-  task_Address: { type:String,required:true },
-  task_Desc: { type:String,required:true },
-  task_Status: { type:String,required:true },
-  branch_Id: { type: mongoose.Schema.Types.ObjectId, ref: 'Branch', required: true },
+  task_Phone: { type: String, required: true },
+  task_Address: { type: String, required: true },
+  task_Desc: [{ type: String, required: true }],
+  task_Status: { type: String, required: true },
+  branch_Id: { type: mongoose.Schema.Types.ObjectId, ref: 'Branch', required: true }, // Task belongs to a branch
+  technician: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Assigned technician
+  accessories: [
+    {
+      accessories_Id: { type: String, required: true }, // Change from ObjectId to String
+      quantity: Number,
+    },
+  ],
 });
 
 taskSchema.statics.generateTaskId = async function () {
@@ -89,5 +96,5 @@ accessoriesSchema.statics.generateaccessoriesId = async function () {
 const user = mongoose.model('profiles', userSchema);
 const branch = mongoose.model('branches', branchSchema);
 const task = mongoose.model('tasks', taskSchema);
-const accessories = mongoose.model('accessoriess', accessoriesSchema);
-module.exports = { branch, user,task,accessories };
+const accessoriess = mongoose.model('accessoriess', accessoriesSchema);
+module.exports = { branch, user,task,accessoriess };

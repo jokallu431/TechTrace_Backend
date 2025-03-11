@@ -82,7 +82,6 @@ router.post('/login',activityLogger, async function(req, res, next) {
           if (result==true){
             req.users=users;
             req.userId = users._id; 
-            console.log("user Id",req.userId);
             
           let token = generateAccessToken(JSON.stringify(users));
           res.send({
@@ -104,10 +103,8 @@ router.post('/login',activityLogger, async function(req, res, next) {
 router.get('/verify', function (req, res, next){
 
   let token= verifyToken(req.headers.authorization.split(" ")[1]);
-    console.log("token",token);
     
   user.findById(token._id).then((user)=>{
-    console.log(user);
     
     res.send(user);
   });

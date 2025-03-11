@@ -37,6 +37,22 @@ router.post('/create_branch', async function(req, res, next) {
       }
     });
 
+    router.get("/branch_list/:branch_Id", async (req, res) => {
+      try {
+        const branch_Id = req.params.branch_Id;
+        const branchData = await branch.findOne({ branch_Id });
+    
+        if (!branchData) {
+          return res.status(404).json({ message: "Branch not found" });
+        }
+    
+        res.status(200).json(branchData);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+    });
+    
+
 
     // PATCH: Update a branch by branch_Id
 router.patch('/update_branch/:branch_Id', async (req, res) => {

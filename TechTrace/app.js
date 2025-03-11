@@ -1,3 +1,4 @@
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -21,8 +22,20 @@ var taskRouter = require('./routes/task');
 var accessoiresRouter = require('./routes/accessories');
 var app = express();
 app.use(cors());
-mongoose.connect('mongodb://127.0.0.1:27017/Trace_Tech')
-  .then(() => console.log('DB Connected for all!'));
+
+// Connect to MongoDB
+const dbURI = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+
+async function connectDB() {
+  try {
+    await mongoose.connect(dbURI);
+    console.log('DB Connected!');
+  } catch (err) {
+    console.log('DB connection error:', err);
+  }
+}
+
+connectDB();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

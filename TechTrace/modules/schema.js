@@ -45,7 +45,7 @@ const taskSchema = new mongoose.Schema({
   task_Desc: [{ type: String, required: true }],
   task_Status: { type: String, required: true },
   branch_Id: { type: mongoose.Schema.Types.ObjectId, ref: 'Branch', required: true }, // Task belongs to a branch
-  technician: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Assigned technician
+  technician: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Assigned technician
   accessories: [
     {
       accessories_Id: { type: String, required: true }, // Change from ObjectId to String

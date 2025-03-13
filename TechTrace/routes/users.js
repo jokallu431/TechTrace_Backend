@@ -72,31 +72,40 @@ router.get('/technician_list', async (req, res) => {
 
 
 /* User Login */
-router.post('/login',activityLogger, async function(req, res, next) {
-  const {email} = req.body;
-    const users = await user.findOne({email:email});
-    
-    if (users){
-      let password=(req.body.password);
-      let result= await decrypt(password,users.password);
-          if (result==true){
-            req.users=users;
-            req.userId = users._id; 
-            
-          let token = generateAccessToken(JSON.stringify(users));
-          res.send({
-              message :"User List",
-              status:"Success decrypt",
-              data:users,token
-        })
-    }}
-    else{
-      res.send({
-        message :"User List",
-        status:"Login failed. Try again",
-        data:[]
-  })
-    } 
+router.post('/login', async function(req, res, next) {
+  const { email, password } = req.body;
+
+  const users = await user.findOne({ email: email });
+
+  if (users) {
+    // Compare password using decryption or hashing
+    let result = await decrypt(password, users.password);
+
+    if (result) {
+      // Login successful, generate token and send it
+      const token = generateAccessToken(JSON.stringify(users));
+      return res.status(200).send({
+        message: "User login successful",
+        status: "Success decrypt",
+        data: users,
+        token
+      });
+    } else {
+      // Password incorrect, return 401 Unauthorized
+      return res.status(401).send({
+        message: "Incorrect password. Please try again.",
+        status: "Login failed",
+        data: []
+      });
+    }
+  } else {
+    // Email not found, return 404 Not Found
+    return res.status(404).send({
+      message: "Email not found. Please check your email and try again.",
+      status: "Login failed",
+      data: []
+    });
+  }
 });
 
 /* Token Verification */
